@@ -4,7 +4,7 @@
 			<el-header class="header">
 				<div class="gxk">青青芒果后台管理</div>
 				<div class="headerRight">
-					<div class="username">范玉龙</div>
+					<div class="username">{{admin_name}}</div>
 					<div class="line"></div>
 					<div class="tui" @click="exit">退出</div>
 				</div>
@@ -118,7 +118,6 @@
 }
 </style>
 <script>
-	// import resource from '../../api/resource.js'
 	export default{
 		data(){
 			return{
@@ -127,12 +126,16 @@
 			}
 		},
 		created(){
-			this.admin_name = sessionStorage.getItem("admin_name");
-			let tab = sessionStorage.getItem("tab");
+			this.admin_name = sessionStorage.getItem("username");
+			let tab = sessionStorage.getItem("tab").indexOf('?') > -1 ? sessionStorage.getItem("tab").split("?")[0] : sessionStorage.getItem("tab");
 			if(!tab){
 				this.activeIndex = '/index';
 			}else{
-				this.activeIndex = tab;
+				if(tab == '/category' || tab == '/category_02' || tab == '/category_03'){
+					this.activeIndex = '/category';
+				}else{
+					this.activeIndex = tab;
+				}
 			}
 		},	
 		watch:{
@@ -142,7 +145,12 @@
 		},
 		methods:{
 			handleSelect(index){
-				this.activeIndex = index;
+				if(index == '/category' || index == '/category_02' || index == '/category_03'){
+					this.activeIndex = '/category';
+				}else{
+					this.activeIndex = index;
+				}
+				
 			},
 			//点击退出
 			exit(){

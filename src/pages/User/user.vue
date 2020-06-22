@@ -46,6 +46,8 @@
 			</el-table-column>
 			<el-table-column prop="shop_num" label="发布总数" align="center">
 			</el-table-column>
+			<el-table-column prop="shop_num" label="活跃天数" align="center">
+			</el-table-column>
 			<el-table-column prop="shop_num" label="等级" align="center">
 			</el-table-column>
 			<el-table-column prop="shop_num" label="状态" align="center">

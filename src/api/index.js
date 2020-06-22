@@ -1,16 +1,14 @@
 import axios from 'axios'
-import router from '../router/index.js'
 const baseURL = `${location.origin}/admin/`;
 // 创建axios实例，可以自定义配置
 const instance = axios.create({
   baseURL,
 });
 
-instance.interceptors.response.use(response => {
+instance.interceptors.response.use(function (response) {
   switch (response.data.code) {
-    case 400:
-    sessionStorage.clear();
-    router.replace("/login");
+    case 300:
+    window.alert('用户未登陆');
   }
   return response;
 },function (error) {

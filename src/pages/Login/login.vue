@@ -53,7 +53,7 @@
 				font-size: 18px;
 				flex:1;
 				height: 60px;
-				color: #333;
+				color: #fff;
 			}
 			::-webkit-input-placeholder {  
 				color: #ffffff; 
@@ -86,7 +86,7 @@
 }
 </style>
 <script>
-	// import resource from '../api/resource.js'
+	import resource from '../../api/resource.js'
 	export default{
 		data(){
 			return{
@@ -105,17 +105,17 @@
 						username: this.username,
 						password: this.password
 					}
-					// resource.login(userObj).then(res => {
-					// 	if(res.data.code == "0"){
-					// 		this.$message.success("登录成功");
-					// 		//获取返回的用户信息传递到主页
-					// 		let userObj = res.data.data[0];
-					// 		sessionStorage.setItem("username",userObj.username);
-					// 		this.$router.push('/index');
-					// 	}else{
-					// 		this.$message.error(res.data.msg);
-					// 	};
-					// });
+					resource.login(userObj).then(res => {
+						if(res.data.code == "0"){
+							this.$message.success("登录成功");
+							//获取返回的用户信息传递到主页
+							let userObj = res.data.data[0];
+							sessionStorage.setItem("username",userObj.username);
+							this.$router.push('/index');
+						}else{
+							this.$message.error(res.data.msg);
+						};
+					});
 				}
 			}
 		}
