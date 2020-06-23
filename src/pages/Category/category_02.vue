@@ -7,7 +7,7 @@
 			<el-table :data="category_list" border style="width: 100%" :header-cell-style="{'background':'#f4f4f4'}">
 				<el-table-column prop="sort_id" label="序号" align="center">
 				</el-table-column>
-				<el-table-column prop="temp_id" label="模版名称" align="center">
+				<el-table-column prop="temp_desc" label="模版名称" align="center">
 				</el-table-column>
 				<el-table-column prop="category_name" label="名称" align="center">
 				</el-table-column>

@@ -24,7 +24,6 @@ app.get('/getTempList', (req, res) => {
         }   
     });
 });
-
 // 获取一级二级分类列表
 app.get('/getCategoryList', (req, res) => { 
     var sql = $sql.categorys.categoryList;
@@ -33,21 +32,6 @@ app.get('/getCategoryList', (req, res) => {
     //根据sql语句对数据库进行查询
     conn.query(sql,[values],function(err, result) { 
         if (result) {
-            var tem_sql = $sql.categorys.tempList;
-            var temp_list = [];
-            //根据sql语句对数据库进行查询
-            conn.query(tem_sql,function(err, result) { 
-                temp_list = result; 
-            });
-            result.map(item => {
-                temp_list.map(temp_item => {
-                    if(item.temp_id == temp_item.temp_id){
-                        console.log(temp_item.temp_desc)
-                        item.temp_name = temp_item.temp_desc;
-                        return;
-                    }
-                })
-            })
             var response = JSON.stringify({code:0,data: result});
             res.send(response);
         }
@@ -64,10 +48,10 @@ app.post('/addCategory',(req, res) => {
     let temp_id = req.body.temp_id;
     var values = [];
     var sql = null;
-    if(req.body.p_id && req.body.desc){
+    if(req.body.p_id && req.body.category_desc){
         let p_id = req.body.p_id;
-        let desc = req.body.desc;
-        values = [[p_id,sort_id,category_name,temp_id,desc]];
+        let category_desc = req.body.category_desc;
+        values = [[p_id,sort_id,category_name,temp_id,category_desc]];
         sql = $sql.categorys.addCategory02;
     }else{
         values = [[sort_id,category_name,temp_id]];
@@ -126,9 +110,9 @@ app.post('/updateCategory',(req, res) => {
     var temp_id = req.body.temp_id;     
     var values = [];
     var sql = null;
-    if(req.body.desc){
-        let desc = req.body.desc;
-        values = [sort_id,category_name,temp_id,desc,category_id];
+    if(req.body.category_desc){
+        let category_desc = req.body.category_desc;
+        values = [sort_id,category_name,temp_id,category_desc,category_id];
         sql = $sql.categorys.updateCategory02;
     }else{
         values = [sort_id,category_name,temp_id,category_id];
@@ -146,13 +130,6 @@ app.post('/updateCategory',(req, res) => {
     }  
 })
 });
-
-
-
-
-
-
-
 // 获取三级标签列表
 app.get('/getTagList', (req, res) => { 
     var sql = $sql.categorys.tagList;
@@ -170,7 +147,6 @@ app.get('/getTagList', (req, res) => {
         }   
     });
 });
-
 // 添加标签
 app.post('/addTag',(req, res) => { 
     let sort_id = req.body.sort_id;
@@ -190,7 +166,6 @@ app.post('/addTag',(req, res) => {
         }  
     })
 });
-
 // 删除标签
 app.post('/deleteTag',(req, res) => {   
     var tag_id = req.body.tag_id;
@@ -208,7 +183,6 @@ app.post('/deleteTag',(req, res) => {
         }  
     })
 });
-
 // 标签详情
 app.get('/getTagDetail',(req, res) => {   
     var tag_id = req.query.tag_id;
@@ -225,7 +199,6 @@ app.get('/getTagDetail',(req, res) => {
         }  
     })
 });
-
 // 修改标签
 app.post('/updateTag',(req, res) => {   
     var tag_id = req.body.tag_id;                   
@@ -244,6 +217,37 @@ app.post('/updateTag',(req, res) => {
         res.send(response);
     }  
 })
+});
+//获取二级分类和标签列表（发布页面）
+app.get('/getCateAndTag',(req, res) => {   
+    var category_id = req.query.category_id;
+    var sql1 = 'select category_desc,temp_id from category where category_id = ?';
+    var req1 = [[category_id]];
+    //根据sql语句对数据库进行查询
+    conn.query(sql1,[req1],function(err,res1) {   
+        if (res1) {
+            var res1 = res1;
+            var sql2 = 'select tag_id,tag_name from tag where cate_id = ?';
+            var req2 = [[category_id]];
+            //根据sql语句对数据库进行查询
+            conn.query(sql2,[req2],function(err,res2) {   
+                if (res2) {
+                    let resObj = res1[0];
+                    resObj.tags = res2;
+                    jsonWrite(res, resObj);
+                }
+                if (err) {       
+                    var response = JSON.stringify({code:1,msg:"查询失败"});
+                    res.send(response);
+                }  
+            })
+            // jsonWrite(res, result);
+        }
+        if (err) {       
+            var response = JSON.stringify({code:1,msg:"查询失败"});
+            res.send(response);
+        }  
+    })
 });
 
 // 请求成功后对返回数据的处理

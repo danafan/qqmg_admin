@@ -5,7 +5,7 @@ var sqlMap = {
     },
     // 分类和标签操作
     categorys: {
-        categoryList: 'select * from category where p_id = ? order by sort_id',                    //查询一级二级分类 
+        categoryList: 'select * from category left join template on category.temp_id=template.temp_id where p_id = ? order by sort_id',                    //查询一级二级分类 
         addCategory: 'insert into category(`sort_id`,`category_name`,`temp_id`) values ?',  //添加一级分类                                                                                     //技术分享列表
         addCategory02: 'insert into category(`p_id`,`sort_id`,`category_name`,`temp_id`,`category_desc`) values ?',  //添加二级分类                                                                                     //技术分享列表
         deleteCategory: 'delete from category where category_id = ?',             //删除一级分类
