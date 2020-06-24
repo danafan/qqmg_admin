@@ -241,7 +241,6 @@ app.get('/getCateAndTag',(req, res) => {
                     res.send(response);
                 }  
             })
-            // jsonWrite(res, result);
         }
         if (err) {       
             var response = JSON.stringify({code:1,msg:"查询失败"});

@@ -19,13 +19,12 @@ var sqlMap = {
         updateTag: 'update tag set sort_id = ?,tag_name = ? where tag_id = ?',	  //修改标签
         tempList: 'select * from template',                                       //查询模版
     },
-    // // 读书笔记
-    // notes: {
-    //     noteList: 'select * from notes order by id desc limit ?,5',                                                                                                     //读书笔记列表
-    //     addNote: 'insert into notes(`title`,`author`,`descs`,`pageimg`,`content`,`createdTime`) values ?',                                   //添加读书笔记
-    //     delNote: 'delete from notes where id = ?',                                                                                           //删除读书笔记
-    //     noteDetail: 'select * from notes where id = ?',                                                                                      //读书笔记详情
-    //     updateNote: 'update notes set title = ?,author = ?,descs = ?,pageimg = ?,content = ?,createdTime = ? where id = ?',                  //修改读书笔记
+    // 信息管理
+    // infos: {
+    //     infoList: 'select * from notes order by id desc limit ?,5',                                                                                                     //读书笔记列表
+    //     addInfo: 'insert into info(`create_user_img`,`create_user_nickname`,`create_user_id`,`create_time`,`level_01_id`,`level_02_id`,`info_desc`,`contact`,`contact_phone`) values ?',                                   
+    //     delInfo: 'delete from notes where id = ?',                                                                                           //删除读书笔记
+    //     infoDetail: 'select * from notes where id = ?',                                                                                      //读书笔记详情
     // },
     // // 我的日志
     // logs: {

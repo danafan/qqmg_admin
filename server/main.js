@@ -1,16 +1,19 @@
 var express = require('express');
 var userApi = require('./userApi');
 var categoryApi = require('./categoryApi');
-
-
 var publicApi = require('./publicApi');
-var noteApi = require('./noteApi');
-var logApi = require('./logApi');
-var shareApi = require('./shareApi');
-var draftApi = require('./draftApi');
-var readingApi = require('./readingApi');
-var messageApi = require('./messageApi');
 var imgApi = require('./imgApi');
+var infoApi = require('./infoApi');
+
+
+
+// var noteApi = require('./noteApi');
+// var logApi = require('./logApi');
+// var shareApi = require('./shareApi');
+// var draftApi = require('./draftApi');
+// var readingApi = require('./readingApi');
+// var messageApi = require('./messageApi');
+
 var fs = require('fs');
 var path = require('path');
 var bodyParser = require('body-parser');
@@ -38,35 +41,39 @@ app.use(session({
 }));
 
 //express处理post请求参数
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.json())
+app.use(express.urlencoded({extended: true}));
 
 // 服务开启后访问指定编译好的dist文件下的数据
 app.use(express.static(path.resolve(__dirname, '../dist')));
 
 //用户控制器
 app.use('/admin', userApi);
-//公共控制器
-app.use('/admin', publicApi);
 //分类控制器
 app.use('/admin', categoryApi);
+//信息控制器
+app.use('/admin', infoApi);
+//公共控制器
+app.use('/admin', publicApi);
+// 图片管理控制器
+app.use('/admin', imgApi);
+
 
 
 
 // 技术分享控制器
-app.use('/admin', shareApi);
+// app.use('/admin', shareApi);
 // 读书笔记控制器
-app.use('/admin', noteApi);
+// app.use('/admin', noteApi);
 // 我的日志控制器
-app.use('/admin', logApi);
+// app.use('/admin', logApi);
 // 草稿控制器
-app.use('/admin', draftApi);
+// app.use('/admin', draftApi);
 // 最近在读控制器
-app.use('/admin', readingApi);
+// app.use('/admin', readingApi);
 // 留言控制器
-app.use('/admin', messageApi);
-// 图片管理控制器
-app.use('/admin', imgApi);
+// app.use('/admin', messageApi);
+
 
 
 

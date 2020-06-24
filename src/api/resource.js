@@ -1,18 +1,18 @@
 import http from './request.js'
 let path = {	
-	state: "state",						//判断用户状态
-	login: "login",						//用户登录
+	state: "state",							//判断用户状态
+	login: "login",							//用户登录
 	exit: "exit",							//用户退出
 	getCategoryList:'getCategoryList',		//获取一级二级分类
 	addCategory:'addCategory',				//添加分类
 	getCategoryDetail:'getCategoryDetail',	//分类详情
-	updateCategory:'updateCategory',	//修改分类
-	deleteCategory:'deleteCategory',				//删除分类
+	updateCategory:'updateCategory',		//修改分类
+	deleteCategory:'deleteCategory',	    //删除分类
 	getTagList:'getTagList',				//获取三级标签
 	addTag:'addTag',						//添加三级标签
-	deleteTag:'deleteTag',				//删除三级标签
-	getTagDetail:'getTagDetail',						//查询三级标签
-	updateTag:'updateTag',						//修改三级标签
+	deleteTag:'deleteTag',					//删除三级标签
+	getTagDetail:'getTagDetail',			//查询三级标签
+	updateTag:'updateTag',					//修改三级标签
 	getTempList:'getTempList',				//查询模版列表
 
 }

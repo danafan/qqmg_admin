@@ -22,12 +22,13 @@ app.post('/uploadImg',(req, res) => {
        maxFieldsSize : 2 * 1024 * 1024      //byte//最大可上传大小
    });
     form.parse(req, function (err, fields, files) {
-        var imgObj = files.addImgList;
+        var file = files.file;
         // 获取原来的图片路径和图片名
-        var oldpath = imgObj.path;
+        var oldpath = file.path;
+        //拿到扩展名
+        var extname = path.extname(file.name);
         // 生成新路径和图片名（修改图片名字）
-        var uuid = UUID.v1();
-        var newname = uuid + imgObj.name;
+        var newname = Date.now() + Math.ceil(Math.random()*10000) + extname;
         var newpath = '../dist/static/uploads/' + newname;
         //修改服务器内图片名并上传
         fs.rename(oldpath,newpath,(err)=>{
