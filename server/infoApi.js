@@ -12,7 +12,17 @@ var app = express();
 
 // 信息列表
 app.get('/infoList', (req, res) => { 
-    var sql = 'select * from info left join category on info.level_02_id = category.category_id order by info_id';
+    if(req.query.level_01_id == 0){
+        var sql = 'select * from info left join category on info.level_02_id = category.category_id order by info_id';
+    }else{
+        let keys = [];
+        let vals = [];
+        for (var key in req.query) {
+            keys.push(key);
+            vals.push(req.query[key]);
+        }
+        var sql = 'select * from info left join category on(info.level_02_id = category.category_id) where ' + keys.join(' and ') + ' in(' + vals.join(',') + ') order by info_id';
+    }
     //根据sql语句对数据库进行查询
     conn.query(sql, function(err, result) { 
         if (result) {
@@ -81,18 +91,33 @@ app.post('/deleteDraft',(req, res) => {
     })
 });
 
-// 草稿详情
-app.get('/getDraftDetail',(req, res) => {   
-    var id = req.query.id;
-    var sql = $sql.drafts.draftDetail;
+// 信息详情
+app.get('/getInfoDetail',(req, res) => {   
+    var id = req.query.info_id;
+    var sql = 'select * from info left join category on info.level_02_id = category.category_id where info_id = ?';
     var values = [[id]];
     //根据sql语句对数据库进行查询
     conn.query(sql,[values],function(err,result) {   
         if (result) {
-            jsonWrite(res, result);
+            var resObj = result[0];
+            if(resObj.tag_ids){
+                let dou = resObj.tag_ids.split("_").join(",");
+                let sql2 = 'select * from tag where tag_id in(' + dou + ')';
+                conn.query(sql2, function(err, tags) { 
+                    if (tags) {
+                        resObj.taggss = tags;
+                        jsonWrite(res, resObj);
+                    } 
+                    if (err) {       
+                        var response = JSON.stringify({code:1,msg:"查询失败"});
+                        res.send(response);
+                    }  
+                });
+            }
+            // jsonWrite(res, result[0]);
         }
         if (err) {       
-            var response = JSON.stringify({code:1,msg:"查询详情失败"});
+            var response = JSON.stringify({code:1,msg:"查询失败"});
             res.send(response);
         }  
     })
@@ -124,10 +149,10 @@ app.post('/updateDraft',(req, res) => {
     //根据sql语句对数据库进行查询
     conn.query(sql,values,function(err,result) {   
         if (result) {
-         var response = JSON.stringify({code:0,msg:"修改成功"});
-         res.send(response);
-     }
-     if (err) {       
+           var response = JSON.stringify({code:0,msg:"修改成功"});
+           res.send(response);
+       }
+       if (err) {       
         var response = JSON.stringify({code:1,msg:"修改失败"});
         res.send(response);
     }  
