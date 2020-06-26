@@ -6,14 +6,6 @@ var imgApi = require('./imgApi');
 var infoApi = require('./infoApi');
 
 
-
-// var noteApi = require('./noteApi');
-// var logApi = require('./logApi');
-// var shareApi = require('./shareApi');
-// var draftApi = require('./draftApi');
-// var readingApi = require('./readingApi');
-// var messageApi = require('./messageApi');
-
 var fs = require('fs');
 var path = require('path');
 var bodyParser = require('body-parser');
@@ -58,21 +50,6 @@ app.use('/admin', publicApi);
 // 图片管理控制器
 app.use('/admin', imgApi);
 
-
-
-
-// 技术分享控制器
-// app.use('/admin', shareApi);
-// 读书笔记控制器
-// app.use('/admin', noteApi);
-// 我的日志控制器
-// app.use('/admin', logApi);
-// 草稿控制器
-// app.use('/admin', draftApi);
-// 最近在读控制器
-// app.use('/admin', readingApi);
-// 留言控制器
-// app.use('/admin', messageApi);
 
 
 

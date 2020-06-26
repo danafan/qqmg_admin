@@ -14,7 +14,7 @@
 				</el-date-picker>
 			</el-form-item>
 			<el-form-item label="发布人：">
-				<el-input v-model="req.phone" type="number" placeholder="发布人手机号"></el-input>
+				<el-input v-model="req.create_user_nickname" type="number" placeholder="发布人昵称"></el-input>
 			</el-form-item>
 			<el-form-item label="信息类型：">
 				<el-cascader
@@ -78,7 +78,7 @@
 					pagesize:10,
 					push_start_time:"",
 					push_end_time:"",
-					phone:"",
+					create_user_nickname:"",
 					browse:""
 				},
 				user_status_list:[

@@ -9,16 +9,39 @@ conn.connect();
 
 var app = express();
 
+//根据用户id获取用户信息
+app.get('/getUserInfo',(req, res) => { 
+    var user_id = req.query.user_id;
+    var sql = 'select user.*,(select count(info.create_user_id) from info where user.user_id=info.create_user_id) num from user where user_id = ?'
+    var values = [[user_id]];
+    //根据sql语句对数据库进行查询
+    conn.query(sql,[values],function(err,result) {   
+        if (result) {
+            if (result) {
+                jsonWrite(res, result[0]);
+            } 
+            if (err) {       
+                var response = JSON.stringify({code:1,msg:"查询失败"});
+                res.send(response);
+            }  
+        }
+        if (err) {       
+            var response = JSON.stringify({code:1,msg:"查询失败"});
+            res.send(response);
+        }  
+    })
+});
+
 //判断用户是否为登录状态
 app.get('/state',(req, res) => { 
 	if(req.session.userObj){
 		let userObj = JSON.parse(req.session.userObj);
 		var response = JSON.stringify({code:0,msg:"用户已登录",userObj:userObj});
         res.send(response);
-	}else{
-		var response = JSON.stringify({code:1,msg:"用户未登录"});
-        res.send(response);
-	}
+    }else{
+      var response = JSON.stringify({code:1,msg:"用户未登录"});
+      res.send(response);
+  }
 });
 
 //登录
