@@ -9,7 +9,7 @@ conn.connect();
 
 var app = express();
 
-//根据用户id获取用户信息
+//根据用户id获取用户信息(小程序，暂未使用)
 app.get('/getUserInfo',(req, res) => { 
     var user_id = req.query.user_id;
     var sql = 'select user.*,(select count(info.create_user_id) from info where user.user_id=info.create_user_id) num from user where user_id = ?'
@@ -32,7 +32,7 @@ app.get('/getUserInfo',(req, res) => {
     })
 });
 
-//判断用户是否为登录状态
+//判断用户是否为登录状态（小程序，暂未使用）
 app.get('/state',(req, res) => { 
 	if(req.session.userObj){
 		let userObj = JSON.parse(req.session.userObj);
@@ -44,7 +44,7 @@ app.get('/state',(req, res) => {
   }
 });
 
-//登录
+//登录（后台）
 app.post('/login',(req, res) => { 
 	let username = req.body.username;
 	let password = req.body.password;
@@ -82,7 +82,7 @@ app.post('/login',(req, res) => {
     })
 });
 
-//退出登录
+//退出登录（后台）
 app.get('/exit',(req, res) => { 
 	// 清空session
 	req.session.destroy();

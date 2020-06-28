@@ -118,6 +118,7 @@
 }
 </style>
 <script>
+	import resource from '../../api/resource.js'
 	export default{
 		data(){
 			return{
@@ -159,8 +160,8 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					resource.loginOut().then(res => {
-						if(res.data.code == 1){
+					resource.exit().then(res => {
+						if(res.data.code == 0){
 							sessionStorage.clear();
 							this.$message.success(res.data.msg);
 							this.$router.push('/login');

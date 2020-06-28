@@ -24,11 +24,16 @@ app.get('/getTempList', (req, res) => {
         }   
     });
 });
-// 获取一级二级分类列表
+// 获取一级二级分类列表(小程序)
 app.get('/getCategoryList', (req, res) => { 
-    var sql = $sql.categorys.categoryList;
-    var p_id = req.query.p_id;
-    var values = [[p_id]];
+    var sql = "";
+    if(req.query.p_id === ''){
+        sql = 'select * from category order by sort_id'
+    }else{
+        var p_id = req.query.p_id;
+        var values = [[p_id]];
+        sql = $sql.categorys.categoryList;
+    }
     //根据sql语句对数据库进行查询
     conn.query(sql,[values],function(err, result) { 
         if (result) {
@@ -41,6 +46,21 @@ app.get('/getCategoryList', (req, res) => {
         }   
     });
 });
+// 获取一级二级分类列表(后台)
+// app.get('/adminGetCategoryList', (req, res) => { 
+//     var sql = 'select * from category order by sort_id';
+//     //根据sql语句对数据库进行查询
+//     conn.query(sql,function(err, result) { 
+//         if (result) {
+//             var response = JSON.stringify({code:0,data: result});
+//             res.send(response);
+//         }
+//         if (err) {       
+//             var response = JSON.stringify({code:1,msg:"查询失败"});
+//             res.send(response);
+//         }   
+//     });
+// });
 // 添加分类
 app.post('/addCategory',(req, res) => { 
     let sort_id = req.body.sort_id;

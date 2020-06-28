@@ -7,7 +7,7 @@ import echarts from 'echarts'
 Vue.prototype.$echarts = echarts
 
 Vue.use(ElementUI);
-// Vue.prototype.captcha = `${location.origin}/admin/admin/captcha`;		//获取验证码前缀
+Vue.prototype.baseUrl = "http://localhost:8089/static/uploads/";		
 new Vue({
   render: h => h(App),
   router

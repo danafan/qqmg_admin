@@ -14,6 +14,8 @@ let path = {
 	getTagDetail:'getTagDetail',			//查询三级标签
 	updateTag:'updateTag',					//修改三级标签
 	getTempList:'getTempList',				//查询模版列表
+	adminInfoList:'adminInfoList',			//获取信息列表
+	deleteInfo:'deleteInfo',				//删除信息
 
 }
 export default{
@@ -73,6 +75,15 @@ export default{
 	getTempList(params){
 		return http.get(path.getTempList, params)
 	},
+	//获取信息列表
+	adminInfoList(params){
+		return http.get(path.adminInfoList, params)
+	},
+	//删除信息
+	deleteInfo(params){
+		return http.post(path.deleteInfo, params)
+	},
+	
 
 
 }
