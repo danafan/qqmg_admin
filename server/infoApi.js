@@ -35,19 +35,6 @@ app.get('/infoList', (req, res) => {
     //根据sql语句对数据库进行查询
     conn.query(sql, function(err, result) { 
         if (result) {
-            result.map(item => {
-                if(item.tag_ids){
-                    let dou = item.tag_ids.split("_").join(",");
-                    let sql2 = 'select * from tag where tag_id in(' + dou + ')';
-                    conn.query(sql2, function(err, result1) { 
-                        console.log("有")
-                        if (result1) {
-                            item.taggss = result1;
-                        }   
-                    });
-                }
-            })
-            console.log("跳过")
             jsonWrite(res, result);
         }
         if (err) {       
@@ -167,17 +154,36 @@ app.get('/getInfoDetail',(req, res) => {
     conn.query(sql,[values],function(err,result) {   
         if (result) {
             var resObj = result[0];
-            let browse_num = resObj.browse_num + 1;
-            let sql2 = 'update info set browse_num = '+ browse_num +' where info_id = ' + id;
-            conn.query(sql2, function(err, res2) { 
-                if (res2) {
-                    jsonWrite(res, resObj);
-                } 
-                if (err) {       
-                    var response = JSON.stringify({code:1,msg:"查询失败"});
+            var sqls = {
+                data: function(callback) {
+                    let browse_num = resObj.browse_num + 1;
+                    let sql2 = 'update info set browse_num = '+ browse_num +' where info_id = ' + id;
+                    conn.query(sql2, function(err, res2) { 
+                     callback(err, resObj);  
+                 });
+                },
+                name: function(callback) {
+                    let sql3 = 'select category.category_name from category where category.category_id = ' + resObj.p_id;
+                    conn.query(sql3, function(err, res3) {
+                        callback(err, res3);
+                    });
+                }
+                
+            };
+            async.series(sqls, function(err, results) {
+                if(err) {
+                    var response = JSON.stringify({code:1,msg:"获取失败"});
                     res.send(response);
-                }  
+                } else {
+                    let obj = {code:0};
+                    let data = results.data;
+                    data.cate_01_name = results.name[0].category_name;
+                    obj.data = data;
+                    var response = JSON.stringify(obj);
+                    res.send(response);
+                }
             });
+
         }
         if (err) {       
             var response = JSON.stringify({code:1,msg:"查询失败"});
