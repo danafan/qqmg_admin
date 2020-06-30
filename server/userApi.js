@@ -2,6 +2,7 @@ var express = require('express');
 var models = require('./db');             //数据库链接信息
 var mysql = require('mysql');               
 var $sql = require('./sql');              //sql语句
+var request = require('request');
 
 //连接数据库
 var conn = mysql.createConnection(models.mysql);
@@ -9,39 +10,41 @@ conn.connect();
 
 var app = express();
 
-//根据用户id获取用户信息(小程序，暂未使用)
-app.get('/getUserInfo',(req, res) => { 
-    var user_id = req.query.user_id;
-    var sql = 'select user.*,(select count(info.create_user_id) from info where user.user_id=info.create_user_id) num from user where user_id = ?'
-    var values = [[user_id]];
-    //根据sql语句对数据库进行查询
-    conn.query(sql,[values],function(err,result) {   
+//根据code获取openid
+app.get('/getOpenId',(req, res) => { 
+    var code = req.query.code;
+    let options = {
+        method: 'GET',
+        url: 'https://api.weixin.qq.com/sns/jscode2session?appid=' + models.AppId + "&secret=" + models.AppSecret + "&js_code=" + code + "&grant_type=authorization_code"
+    };
+    request(options, (error, response, body) => {
+        //返回值的字符串转JSON
+        let data = JSON.parse(body);
+        let openid = data.openid;
+        let session_key = data.session_key;
+        var response = JSON.stringify({code:0,openid:openid});
+        res.send(response);
+    });
+});
+
+//判断根据openid获取用户状态
+app.get('/getUserStatus',(req, res) => { 
+    let openid = JSON.stringify(req.query.openid) ;
+    var sql = 'select * from user where openid = ' + openid;
+	conn.query(sql,function(err,result) {   
         if (result) {
-            if (result) {
-                jsonWrite(res, result[0]);
-            } 
-            if (err) {       
-                var response = JSON.stringify({code:1,msg:"查询失败"});
-                res.send(response);
-            }  
+            if(result.length > 0){
+                var response = JSON.stringify({code:0,userInfo:result[0],msg:"获取成功"});
+            }else{
+                var response = JSON.stringify({code:0,userInfo:null,msg:"获取成功"});
+            }
+            res.send(response);
         }
         if (err) {       
-            var response = JSON.stringify({code:1,msg:"查询失败"});
+            var response = JSON.stringify({code:1,msg:"获取失败"});
             res.send(response);
         }  
     })
-});
-
-//判断用户是否为登录状态（小程序，暂未使用）
-app.get('/state',(req, res) => { 
-	if(req.session.userObj){
-		let userObj = JSON.parse(req.session.userObj);
-		var response = JSON.stringify({code:0,msg:"用户已登录",userObj:userObj});
-        res.send(response);
-    }else{
-      var response = JSON.stringify({code:1,msg:"用户未登录"});
-      res.send(response);
-  }
 });
 
 //登录（后台）
