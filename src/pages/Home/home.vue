@@ -122,7 +122,7 @@
 	export default{
 		data(){
 			return{
-				activeIndex:"/user",
+				activeIndex:"/index",
 				admin_name:""
 			}
 		},

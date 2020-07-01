@@ -3,6 +3,7 @@ let path = {
 	state: "state",							//判断用户状态
 	login: "login",							//用户登录
 	exit: "exit",							//用户退出
+	getIndexTop: "getIndexTop",				//获取首页顶部信息
 	getCategoryList:'getCategoryList',		//获取一级二级分类
 	addCategory:'addCategory',				//添加分类
 	getCategoryDetail:'getCategoryDetail',	//分类详情
@@ -16,6 +17,8 @@ let path = {
 	getTempList:'getTempList',				//查询模版列表
 	adminInfoList:'adminInfoList',			//获取信息列表
 	deleteInfo:'deleteInfo',				//删除信息
+	getUserList:'getUserList',				//获取用户列表
+	updateUserInfo:'updateUserInfo',		//修改用户状态
 
 }
 export default{
@@ -30,6 +33,10 @@ export default{
 	//用户退出
 	exit(params){
 		return http.get(path.exit, params)
+	},
+	//获取首页顶部信息
+	getIndexTop(params){
+		return http.get(path.getIndexTop, params)
 	},
 	//获取一级二级分类
 	getCategoryList(params){
@@ -83,7 +90,14 @@ export default{
 	deleteInfo(params){
 		return http.post(path.deleteInfo, params)
 	},
-	
+	//获取用户列表
+	getUserList(params){
+		return http.get(path.getUserList, params)
+	},
+	//修改用户状态
+	updateUserInfo(params){
+		return http.post(path.updateUserInfo, params)
+	},
 
 
 }

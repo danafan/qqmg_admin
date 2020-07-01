@@ -48,11 +48,11 @@ app.get('/getCategoryList', (req, res) => {
 });
 // 获取一级二级分类列表(后台)
 // app.get('/adminGetCategoryList', (req, res) => { 
-//     var sql = 'select * from category order by sort_id';
+//     var sql = 'select * from category where p_id = 0 order by sort_id';
 //     //根据sql语句对数据库进行查询
 //     conn.query(sql,function(err, result) { 
 //         if (result) {
-//             var response = JSON.stringify({code:0,data: result});
+//             var response = JSON.stringify({code:0,data: result,msg:"查询成功"});
 //             res.send(response);
 //         }
 //         if (err) {       

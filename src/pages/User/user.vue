@@ -5,17 +5,8 @@
 				<el-form-item label="手机号：">
 					<el-input v-model="req.phone" type="number" placeholder="请输入手机号"></el-input>
 				</el-form-item>
-				<el-form-item label="等级：">
-					<el-input v-model="req.level" type="number" placeholder="请输入等级"></el-input>
-				</el-form-item>
-				<el-form-item label="发布总数：">
-					<el-input v-model="req.push_total" type="number" placeholder="请输入发布总数"></el-input>
-				</el-form-item>
-				<el-form-item label="注册地址：">
-					<el-input v-model="req.address" type="number" placeholder="注册地址"></el-input>
-				</el-form-item>
 				<el-form-item label="用户状态：">
-					<el-select v-model="req.user_status">
+					<el-select v-model="req.status">
 						<el-option v-for="item in user_status_list" :key="item.id" :label="item.name" :value="item.id">
 						</el-option>
 					</el-select>
@@ -33,29 +24,27 @@
 			</el-form-item>
 			<el-button type="primary" size="small" @click="search">搜索</el-button>
 		</el-form>
-		<el-table :data="dataObj.list" border style="width: 100%" :header-cell-style="{'background':'#f4f4f4'}">
-			<el-table-column prop="shop_num" label="注册时间" align="center">
+		<el-table :data="dataObj.data" border style="width: 100%" :header-cell-style="{'background':'#f4f4f4'}">
+			<el-table-column label="注册时间" align="center">
+				<template slot-scope="scope">
+					<span>{{scope.row.create_time|formateDate}}</span>
+				</template>
 			</el-table-column>
-			<el-table-column prop="shop_num" label="头像" align="center">
+			<el-table-column prop="create_address" label="注册地址" align="center">
 			</el-table-column>
-			<el-table-column prop="shop_num" label="昵称" align="center">
-			</el-table-column>
-			<el-table-column prop="shop_num" label="手机号" align="center">
-			</el-table-column>
-			<el-table-column prop="shop_num" label="注册地址" align="center">
-			</el-table-column>
-			<el-table-column prop="shop_num" label="发布总数" align="center">
-			</el-table-column>
-			<el-table-column prop="shop_num" label="活跃天数" align="center">
-			</el-table-column>
-			<el-table-column prop="shop_num" label="等级" align="center">
+			<el-table-column prop="phone" label="手机号" align="center">
 			</el-table-column>
 			<el-table-column prop="shop_num" label="状态" align="center">
+				<template slot-scope="scope">
+					<span v-if="scope.row.status == 1">正常</span>
+					<span v-if="scope.row.status == 2">已停用</span>
+				</template>
+			</el-table-column>
+			<el-table-column prop="active_day" label="活跃天数" align="center">
 			</el-table-column>
 			<el-table-column label="操作" align="center">
 				<template slot-scope="scope">
-					<el-button type="text" size="small">启用</el-button>
-					<el-button type="text" size="small">禁用</el-button>
+					<el-button type="text" size="small" @click="setting(scope.row.status,scope.row.user_id)">{{scope.row.status == 1?'禁用':'启用'}}</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -71,13 +60,14 @@
 			>
 		</el-pagination>
 	</div>
-	</el-card>
+</el-card>
 </div>
 </template>
 <style lang="less" scoped>
 
 </style>
 <script>
+	import resource from '../../api/resource.js'
 	export default{
 		data(){
 			return{
@@ -85,12 +75,9 @@
 					page:1,
 					pagesize:10,
 					phone:"",
-					level:"",
-					push_total:"",
-					address:"",
-					user_status:"1",
-					res_start_time:"",
-					res_end_time:""
+					status:"1",
+					start_time:"",
+					end_time:""
 				},
 				user_status_list:[
 				{
@@ -103,31 +90,55 @@
 				}
 				],
 				date:[],		//注册时间
-				dataObj:{
-					list:[
-						{
-							shop_num:"模拟数据"
-						}
-					],
-					total:100
-				}
+				dataObj:{},
 			}
 		},
 		watch:{
 			//注册时间
 			date:function(n){
-				this.req.res_start_time = n?n[0]:"";
-				this.req.res_end_time = n?n[1]:"";
+				this.req.start_time = n?n[0]:"";
+				this.req.end_time = n?n[1]:"";
 			}
+		},
+		created(){
+			//获取列表
+			this.getList();
 		},
 		methods:{
 			//获取列表
 			getList(){
-
+				resource.getUserList(this.req).then(res => {
+					this.dataObj = res.data;
+				})
+			},
+			//设置
+			setting(status,user_id){
+				this.$confirm('确认修改?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					let req = {
+						user_id:user_id,
+						status:status
+					}
+					resource.updateUserInfo(req).then(res => {
+						//获取列表
+						this.getList();
+					})
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '取消'
+					});          
+				});
 			},
 			//搜索
 			search(){
-
+				this.req.page = 1;
+				this.req.pagesize = 10;
+				//获取列表
+				this.getList(this.req);
 			},
 			//分页
 			handleSizeChange(val) {
@@ -140,6 +151,16 @@
 				//获取列表
 				this.getList();
 			},
+		},
+		filters:{
+			formateDate:function(datetime) {
+				function addDateZero(num) {
+					return (num < 10 ? "0" + num : num);
+				}
+				let d = new Date(datetime);
+				let formatdatetime = d.getFullYear() + '-' + addDateZero(d.getMonth() + 1) + '-' + addDateZero(d.getDate()) + ' ' + addDateZero(d.getHours()) + ':' + addDateZero(d.getMinutes()) + ':' + addDateZero(d.getSeconds());
+				return formatdatetime;
+			}
 		}
 	}
 </script>

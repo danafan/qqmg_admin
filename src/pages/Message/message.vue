@@ -13,6 +13,12 @@
 					:default-time="['00:00:00', '23:59:59']">
 				</el-date-picker>
 			</el-form-item>
+			<el-form-item label="类型：">
+				<el-select v-model="req.category_id" clearable>
+					<el-option v-for="item in categoryList" :key="item.category_id" :label="item.category_name" :value="item.category_id">
+					</el-option>
+				</el-select>
+			</el-form-item>
 			<el-form-item label="发布人：">
 				<el-input v-model="req.create_user_nickname" placeholder="发布人昵称"></el-input>
 			</el-form-item>
@@ -67,7 +73,7 @@
 <!-- 查看文件弹框 -->
 <div class="file_box" v-if="showBox" @click.stop="showBox = false">
 	<div class="fileCon">
-		<el-carousel class="fileCon" v-if="file_type == 'image'">
+		<el-carousel class="fileCon" :loop="false" v-if="file_type == 'image'">
 			<el-carousel-item class="fileCon" v-for="item in imgs" :key="item">
 				<img class="fileCon" :src="item">
 			</el-carousel-item>
@@ -116,10 +122,12 @@
 					push_end_time:"",
 					create_user_nickname:"",
 					browse:"",
+					category_id:"",
 					level_01_id:"",
 					level_02_id:""
 				},
 				date:[],		//发布时间
+				categoryList:[],		//类型列表
 				dataObj:{},		//返回数据
 				showBox:false,	//文件弹框不显示
 				imgs:[],
@@ -130,6 +138,8 @@
 		created(){
 			//获取列表
 			this.getList(this.req);
+			//获取一级分类
+			this.getCategoryList();
 		},
 		watch:{
 			//注册时间
@@ -143,6 +153,13 @@
 			getList(req){
 				resource.adminInfoList(req).then(res => {
 					this.dataObj = res.data;
+				})
+			},
+			//获取一级分类
+			getCategoryList(){
+				resource.getCategoryList({p_id:0}).then(res => {
+					this.categoryList = res.data.data;
+					this.categoryList.unshift({category_id:"",category_name:"全部"})
 				})
 			},
 			//搜索
@@ -163,7 +180,7 @@
 				//获取列表
 				this.getList(this.req);
 			},
-			//删除信息
+			//下架
 			deleteInfo(id,file_list){
 				this.$confirm('确认下架?', '提示', {
 					confirmButtonText: '确定',

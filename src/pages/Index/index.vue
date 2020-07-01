@@ -5,49 +5,41 @@
 				<div class="top_item shadow_01">
 					<img src="../../assets/yonghu.png">
 					<div class="right_box">
-						<div class="number">2372</div>
+						<div class="number">{{topInfo.user_total}}</div>
 						<div class="label">用户总数</div>
 					</div>
 				</div>
 				<div class="top_item shadow_02">
 					<img src="../../assets/zhucewangzhan.png">
 					<div class="right_box">
-						<div class="number">88</div>
+						<div class="number">{{topInfo.today_register}}</div>
 						<div class="label">今日注册</div>
 					</div>
 				</div>
 				<div class="top_item shadow_03">
 					<img src="../../assets/huoyue.png">
 					<div class="right_box">
-						<div class="number">106</div>
+						<div class="number">{{topInfo.user_active}}</div>
 						<div class="label">今日活跃</div>
 					</div>
 				</div>
 				<div class="top_item shadow_05">
 					<img src="../../assets/info.png">
 					<div class="right_box">
-						<div class="number">16742</div>
+						<div class="number">{{topInfo.info_total}}</div>
 						<div class="label">信息总数</div>
 					</div>
 				</div>
 				<div class="top_item shadow_04">
 					<img src="../../assets/push.png">
 					<div class="right_box">
-						<div class="number">1800</div>
+						<div class="number">{{topInfo.today_push}}</div>
 						<div class="label">今日发布</div>
 					</div>
 				</div>
 			</div>
 		</el-card>
-		<div class="center_content">
-			<el-card style="margin-top: 10px;width: 49%">
-				<div id="category_main" class="category_box"></div>
-			</el-card>
-			<el-card style="margin-top: 10px;width: 49%">
-				<div id="china_main" class="china_main"></div>
-			</el-card>
-		</div>
-		<el-card>
+		<el-card style="margin-top: 30px">
 			<div id="axis_box" class="axis_box"></div>
 		</el-card>
 	</div>
@@ -105,117 +97,34 @@
 		background-image: linear-gradient(rgb(232,82,114), rgb(236,123,108));
 	}
 }
-.center_content{
-	margin-bottom: 10px;
-	width: 100%;
-	display: flex;
-	justify-content: space-between;
-}
-.category_box{
-	width: 100%;
-	height: 350px;
-}
-.china_main{
-	width: 100%;
-	height: 350px;
-}
 .axis_box{
 	width: 100%;
 	height: 350px;
 }
 </style>
 <script>
+	import resource from '../../api/resource.js'
 	import echarts from "echarts";
-	import '../../../node_modules/echarts/map/js/china.js'; // 引入中国地图数据
 	export default{
 		data(){
 			return{
-				chinaData:[  
-				{name: '北京',value: '100' },{name: '天津',value: Math.round(Math.random()*500) },  
-				{name: '上海',value: Math.round(Math.random()*500) },{name: '重庆',value: Math.round(Math.random()*500) },  
-				{name: '河北',value: Math.round(Math.random()*500) },{name: '河南',value: Math.round(Math.random()*500) },  
-				{name: '云南',value: Math.round(Math.random()*500) },{name: '辽宁',value: Math.round(Math.random()*500) },  
-				{name: '黑龙江',value: Math.round(Math.random()*500) },{name: '湖南',value: Math.round(Math.random()*500) }],	//中国地图数据
+				topInfo:{},		//顶部信息
 			}
 		},
 		mounted(){
-			// 各类别发布数量
-			this.categoryOption();
-			//全国地图
-			this.getChina();
 			//折线图
 			this.getAxis();
 		},
+		created(){
+			//获取顶部数据
+			this.getIndexTop();
+		},
 		methods:{
-			// 各类别发布数量
-			categoryOption(){
-				// 基于准备好的dom，初始化echarts实例
-				var myChart = echarts.init(document.getElementById('category_main'));
-				// 绘制图表
-				myChart.setOption({
-					title: {
-						text: '各类别发布数量',
-						x:'center'  
-					},
-					tooltip: {},
-					xAxis: {
-						data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子', '裤子', '高跟鞋']
-					},
-					yAxis: {},
-					series: [{
-						name: '数量',
-						type: 'bar',
-						itemStyle: {    // 图形的形状
-							color: 'rgb(80,214,248)',
-						},
-						barWidth: 30,
-						data: [5, 20, 36, 10, 10, 20, 10, 10]
-					}]
-				});
-			},
-			//活跃用户地区分布
-			getChina(){
-				var chinaCharts = echarts.init(document.getElementById('china_main'));
-				chinaCharts.setOption({
-					title: {  
-						text: '活跃用户地区分布',  
-						x:'center'  
-					},  
-					tooltip : {  
-						trigger: 'item'  
-					},  
-                	//左侧小导航图标
-                	visualMap: {  
-                		show : false,  
-                		x: 'left',  
-                		y: 'center',  
-                		splitList: [   
-                		{start: 500, end:600},{start: 400, end: 500},  
-                		{start: 300, end: 400},{start: 200, end: 300},  
-                		{start: 100, end: 200},{start: 0, end: 100},  
-                		],  
-                		color: ['#5475f5', '#9feaa5', '#85daef','#74e2ca', '#e6ac53', '#9fb5ea']  
-                	},  
-                	//配置属性
-                	series: [{  
-                		name: '数据',  
-                		type: 'map',  
-                		mapType: 'china',   
-                		roam: true,  
-                		label: {  
-                			normal: {  
-                            	show: true  //省份名称  
-                            },  
-                            emphasis: {  
-                            	show: false  
-                            }  
-                        },  
-                    	data:this.chinaData,  //数据
-                    	nameMap: {
-                    		'哈哈哈': '北京'
-                    	}
-                    }]  
-                });
+			//获取顶部数据
+			getIndexTop(){
+				resource.getIndexTop().then(res => {
+					this.topInfo = res.data;
+				})
 			},
 			//折线图
 			getAxis(){
@@ -224,7 +133,7 @@
 				// 绘制图表
 				axisChart.setOption({
 					title: {
-						text: '活跃用户和发布数量折线图'
+						text: '注册、活跃和发布数量'
 					},
 					tooltip: {
 						trigger: 'axis'

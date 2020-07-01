@@ -36,12 +36,20 @@ const router = new Router({
 })
 // 路由跳转前的钩子
 router.beforeEach(function (to, from, next) {
-  let path = to.fullPath;
-  sessionStorage.setItem("tab",path);
+  let username = sessionStorage.getItem("username");
+  let path = to.path;
+  if(path != "/login"){
+    if(!username){
+      router.push('/login');
+    }else{
+      let path = to.fullPath;
+      sessionStorage.setItem("tab",path);
+    }
+  }else{
+    if(!!username){
+      router.go(-1);
+    }
+  }
   next()
 })
-const originalPush = Router.prototype.push
-Router.prototype.push = function push (location) {
-  return originalPush.call(this, location).catch(err => err)
-}
 export default router;

@@ -4,6 +4,7 @@ var mysql = require('mysql');
 var $sql = require('./sql');              //sql语句
 var path = require('path');
 var fs = require('fs');
+var async = require('async');
 var UUID = require('uuid');
 var formidable = require('formidable');       //上传功能的插件
 
@@ -40,6 +41,62 @@ app.post('/uploadImg',(req, res) => {
                 res.send(response);
             }
         })
+    });
+});
+
+//首页顶部信息
+app.get('/getIndexTop', (req, res) => { 
+    var contents = {
+        user_total: function(callback) {
+            let sql = 'select count(*) from user'
+            conn.query(sql,function(err, result) {
+                callback(err, result[0]['count(*)']); 
+            });
+        },
+        today_register: function(callback) {
+            let d = new Date(new Date(new Date().toLocaleDateString()).getTime());
+            let e = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+            let sql = 'select count(*) from user where create_time >= ' + "'" + e + "'";
+            conn.query(sql, function(err, result) {
+                callback(err, result[0]['count(*)']);
+            });
+        },
+        user_active: function(callback) {
+            let currentDate = new Date().getTime();
+            let sql = 'select count(*) from user where end_time >= ' + "'" + currentDate + "'";
+            conn.query(sql,function(err, result) {
+                callback(err, result[0]['count(*)']); 
+            });
+        },
+        info_total: function(callback) {
+            let sql = 'select count(*) from info'
+            conn.query(sql,function(err, result) {
+                callback(err, result[0]['count(*)']); 
+            });
+        },
+        today_push: function(callback) {
+            let d = new Date(new Date(new Date().toLocaleDateString()).getTime());
+            let e = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+            let sql = 'select count(*) from info where create_time >= ' + "'" + e + "'"
+            conn.query(sql,function(err, result) {
+                callback(err, result[0]['count(*)']); 
+            });
+        }
+    };
+    async.series(contents, function(err, results) {
+        if(err) {
+            var response = JSON.stringify({code:1,msg:"获取失败"});
+            res.send(response);
+        } else {
+            let obj = {code:0};
+            obj.user_total = results.user_total;
+            obj.today_register = results.today_register;
+            obj.user_active = results.user_active;
+            obj.info_total = results.info_total;
+            obj.today_push = results.today_push;
+            var response = JSON.stringify(obj);
+            res.send(response);
+        }
     });
 });
 

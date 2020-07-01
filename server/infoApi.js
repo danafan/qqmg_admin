@@ -51,7 +51,8 @@ app.get('/adminInfoList', (req, res) => {
     let push_end_time = req.query.push_end_time;
     let create_user_nickname = req.query.create_user_nickname;
     let browse_num = req.query.browse;
-    let sqlStr = [];
+    let category_id = req.query.category_id;
+    var sqlStr = [];
     if(push_start_time != ''){
         let ss = 'create_time>=' + "'" + push_start_time + "'" + ' and create_time<=' + "'" + push_end_time + "'";
         sqlStr.push(ss);
@@ -61,6 +62,9 @@ app.get('/adminInfoList', (req, res) => {
     }
     if(browse_num != ''){
         sqlStr.push('browse_num = ' + browse_num);
+    }
+    if(category_id != ''){
+        sqlStr.push('level_01_id = ' + category_id);
     }
     var sql = ''
     if(sqlStr.length > 0){
@@ -75,7 +79,12 @@ app.get('/adminInfoList', (req, res) => {
             });
         },
         total: function(callback) {
-            conn.query('select count(*) from info', function(err, result) {
+            if(sqlStr.length > 0){
+                sql = 'select count(*) from info left join category on(info.level_02_id = category.category_id) where ' + sqlStr.join(',') + ' order by info_id desc';
+            }else{
+                sql = 'select count(*) from info left join category on(info.level_02_id = category.category_id) order by info_id desc';
+            }
+            conn.query(sql, function(err, result) {
                 callback(err, result[0]['count(*)']);
             });
         }
@@ -153,6 +162,11 @@ app.get('/getInfoDetail',(req, res) => {
     //根据sql语句对数据库进行查询
     conn.query(sql,[values],function(err,result) {   
         if (result) {
+            if(result.length == 0){
+                var response = JSON.stringify({code:-1,msg:"没有该信息或已下架"});
+                res.send(response);
+                return;
+            } 
             var resObj = result[0];
             var sqls = {
                 data: function(callback) {
@@ -185,7 +199,8 @@ app.get('/getInfoDetail',(req, res) => {
             });
 
         }
-        if (err) {       
+        if (err) {      
+            console.log(err) 
             var response = JSON.stringify({code:1,msg:"查询失败"});
             res.send(response);
         }  
