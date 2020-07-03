@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import resource from './api/resource.js'
+  // import resource from './api/resource.js'
   export default {
     provide () {
       return {
