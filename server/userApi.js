@@ -75,6 +75,21 @@ app.get('/getUserInfo',(req, res) => {
     })
 });
 
+//获取粉丝总数（小程序，banner暂时还没做）
+app.get('/getFansTotal',(req, res) => { 
+    let sql = 'select count(*) from user'
+    //根据sql语句对数据库进行查询
+    conn.query(sql,function(err,result) {   
+        if (result) {
+            jsonWrite(res, result[0]['count(*)']);
+        } 
+        if (err) {       
+            var response = JSON.stringify({code:1,msg:"查询失败"});
+            res.send(response);
+        }   
+    })
+});
+
 //根据code获取openid
 app.get('/getOpenId',(req, res) => { 
     var code = req.query.code;
