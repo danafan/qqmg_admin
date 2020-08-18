@@ -24,7 +24,7 @@
 					</el-menu-item>
 					<el-menu-item index="/banner">
 						<i class="el-icon-document"></i>
-						<span slot="title">banner管理</span>
+						<span slot="title">模版管理</span>
 					</el-menu-item>
 					<el-menu-item index="/category">
 						<i class="el-icon-guide"></i>

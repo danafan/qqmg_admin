@@ -227,7 +227,6 @@ app.post('/login',(req, res) => {
         				username: username,
         				password: password
         			}
-        			req.session.userObj = JSON.stringify(userObj); // 登录成功，设置 session
         			jsonWrite(res, result);
         		}else{
         			var response = JSON.stringify({code:1,msg:"密码错误"});

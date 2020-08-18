@@ -13,7 +13,7 @@
 					<template slot-scope="scope">
 						<el-button type="text" size="small" @click="edit(scope.row.category_id)">编辑</el-button>
 						<el-button type="text" size="small" @click="deleteItem(scope.row.category_id)">删除</el-button>
-						<el-button type="text" size="small" @click="getDetail(scope.row.category_id)">查看</el-button>
+						<el-button type="text" size="small" @click="getDetail(scope.row.category_id)">查看子分类</el-button>
 					</template>
 				</el-table-column>
 			</el-table>

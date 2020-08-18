@@ -11,13 +11,18 @@
 				</el-table-column>
 				<el-table-column prop="category_name" label="名称" align="center">
 				</el-table-column>
+				<el-table-column prop="category_name" label="标签" align="center">
+					<template slot-scope="scope">
+						<div></div>
+					</template>
+				</el-table-column>
 				<el-table-column prop="category_desc" label="描述" align="center">
 				</el-table-column>
 				<el-table-column label="操作" align="center">
 					<template slot-scope="scope">
 						<el-button type="text" size="small" @click="edit(scope.row.category_id)">编辑</el-button>
 						<el-button type="text" size="small" @click="deleteItem(scope.row.category_id)">删除</el-button>
-						<el-button type="text" size="small" @click="getDetail(scope.row.category_id)">查看</el-button>
+						<!-- <el-button type="text" size="small" @click="getDetail(scope.row.category_id)">查看</el-button> -->
 					</template>
 				</el-table-column>
 			</el-table>
@@ -38,18 +43,28 @@
 					v-model="req.category_desc">
 				</el-input>
 			</el-form-item>
-			<el-form-item label="选择模版：">
-				<el-select v-model="req.temp_id">
-					<el-option v-for="item in template_list" :key="item.temp_id" :label="item.temp_desc" :value="item.temp_id">
-					</el-option>
-				</el-select>
-			</el-form-item>
-		</el-form>
-		<div slot="footer" class="dialog-footer">
-			<el-button @click="showDialog = false">取 消</el-button>
-			<el-button type="primary" @click="submit">确 定</el-button>
-		</div>
-	</el-dialog>
+			<el-form-item label="分类标签">
+				<el-select
+				v-model="req.tag"
+				multiple
+				filterable
+				allow-create
+				default-first-option
+				placeholder="标签内容">
+			</el-select>
+		</el-form-item>
+		<el-form-item label="选择模版：">
+			<el-select v-model="req.temp_id">
+				<el-option v-for="item in template_list" :key="item.temp_id" :label="item.temp_desc" :value="item.temp_id">
+				</el-option>
+			</el-select>
+		</el-form-item>
+	</el-form>
+	<div slot="footer" class="dialog-footer">
+		<el-button @click="showDialog = false">取 消</el-button>
+		<el-button type="primary" @click="submit">确 定</el-button>
+	</div>
+</el-dialog>
 </div>
 </template>
 <style lang="less" scoped>
@@ -68,6 +83,7 @@
 				req:{
 					sort_id:"",
 					category_name:"",
+					tag:[],
 					category_desc:"",
 					temp_id:1
 				},
@@ -149,10 +165,6 @@
 				this.showType = 1;
 				this.showDialog = true;
 			},	
-			//查看
-			getDetail(id){
-				this.$router.push('/category_03?id=' + id);
-			},
 			//编辑
 			edit(id){
 				this.cate_id = id;

@@ -7,7 +7,6 @@ const index = resolve=>require(['@/pages/Index/index'],resolve)
 const banner = resolve=>require(['@/pages/Banner/banner'],resolve)
 const category = resolve=>require(['@/pages/Category/category'],resolve)
 const category_02 = resolve=>require(['@/pages/Category/category_02'],resolve)
-const category_03 = resolve=>require(['@/pages/Category/category_03'],resolve)
 const message = resolve=>require(['@/pages/Message/message'],resolve)
 const user = resolve=>require(['@/pages/User/user'],resolve)
 
@@ -27,7 +26,6 @@ const router = new Router({
     { path: '/banner',name:"banner管理", component: banner},
     { path: '/category',name:"分类管理", component: category},
     { path: '/category_02',name:"二级分类", component: category_02},
-    { path: '/category_03',name:"三级标签", component: category_03},
     { path: '/message',name:"信息管理", component: message},
     { path: '/user',name:"用户管理", component: user}
     ]
