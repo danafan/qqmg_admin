@@ -3,7 +3,7 @@ module.exports = {
 		proxy: {
 			'/admin': {
 				// target: 'http://cs.gxk8090.com',
-				target: 'http://localhost:8089',
+				target: 'http://114.67.110.57',
 				ws: true,
 				changOlrigin: true,		//是否跨域
 			}

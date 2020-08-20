@@ -7,7 +7,7 @@ const instance = axios.create({
 
 instance.interceptors.response.use(function (response) {
   switch (response.data.code) {
-    case 300:
+    case 10000:
     window.alert('用户未登陆');
   }
   return response;

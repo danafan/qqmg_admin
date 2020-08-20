@@ -1,13 +1,33 @@
 import axios from './index'
-var qs = require('qs');
+
 export default {
   post(path, params={}){
-    return axios.post(`${path}`, qs.stringify(params),{headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }});
-  },
-  get(path, params={}){
     let target = {};
+    // let admin_id = localStorage.getItem("admin_admin_id");
+    // if(!!admin_id){
+    //   target.admin_id = admin_id;
+    // }
+    Object.assign(params, target);
+    let form = new FormData();
+    let obj = {};
+    let arr = [];
+    for(let a of Object.keys(params)){ 
+      arr.push(a);
+    }
+    let arrSort = arr.sort(); //参数按照键名排序
+    for(let b of arrSort){
+      let val = params[b];
+      obj[b] = val;
+      form.append(b, val);
+    }
+     return axios.post(`${path}`, form);
+   },
+   get(path, params={}){
+    let target = {};
+    // let admin_id = localStorage.getItem("admin_admin_id");
+    // if(!!admin_id){
+    //   target.admin_id = admin_id;
+    // }
     Object.assign(params, target);
     let arr = [];
     let str = '';
@@ -24,12 +44,6 @@ export default {
     }else{
       return axios.get(`${path}`);
     }
-  },
-  //上传图片专用
-  img(path, params){
-    return axios.post(`${path}`, params,{headers: {
-      'Content-Type':'multipart/form-data'
-    }});
+    
   }
-
 }

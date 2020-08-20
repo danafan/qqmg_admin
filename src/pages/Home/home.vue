@@ -22,7 +22,7 @@
 						<i class="el-icon-menu"></i>
 						<span slot="title">首页</span>
 					</el-menu-item>
-					<el-menu-item index="/banner">
+					<el-menu-item index="/template">
 						<i class="el-icon-document"></i>
 						<span slot="title">模版管理</span>
 					</el-menu-item>
@@ -132,7 +132,7 @@
 			if(!tab){
 				this.activeIndex = '/index';
 			}else{
-				if(tab == '/category' || tab == '/category_02' || tab == '/category_03'){
+				if(tab == '/category' || tab == '/category_02'){
 					this.activeIndex = '/category';
 				}else{
 					this.activeIndex = tab;
@@ -146,7 +146,7 @@
 		},
 		methods:{
 			handleSelect(index){
-				if(index == '/category' || index == '/category_02' || index == '/category_03'){
+				if(index == '/category' || index == '/category_02'){
 					this.activeIndex = '/category';
 				}else{
 					this.activeIndex = index;

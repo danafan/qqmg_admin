@@ -12,14 +12,14 @@
 				<div class="top_item shadow_02">
 					<img src="../../assets/zhucewangzhan.png">
 					<div class="right_box">
-						<div class="number">{{topInfo.today_register}}</div>
+						<div class="number">{{topInfo.user_today_register}}</div>
 						<div class="label">今日注册</div>
 					</div>
 				</div>
 				<div class="top_item shadow_03">
 					<img src="../../assets/huoyue.png">
 					<div class="right_box">
-						<div class="number">{{topInfo.user_active}}</div>
+						<div class="number">{{topInfo.user_today_active}}</div>
 						<div class="label">今日活跃</div>
 					</div>
 				</div>
@@ -33,14 +33,11 @@
 				<div class="top_item shadow_04">
 					<img src="../../assets/push.png">
 					<div class="right_box">
-						<div class="number">{{topInfo.today_push}}</div>
+						<div class="number">{{topInfo.info_today_publish}}</div>
 						<div class="label">今日发布</div>
 					</div>
 				</div>
 			</div>
-		</el-card>
-		<el-card style="margin-top: 30px">
-			<div id="axis_box" class="axis_box"></div>
 		</el-card>
 	</div>
 </template>
@@ -97,10 +94,6 @@
 		background-image: linear-gradient(rgb(232,82,114), rgb(236,123,108));
 	}
 }
-.axis_box{
-	width: 100%;
-	height: 350px;
-}
 </style>
 <script>
 	import resource from '../../api/resource.js'
@@ -111,10 +104,6 @@
 				topInfo:{},		//顶部信息
 			}
 		},
-		mounted(){
-			//折线图
-			this.getAxis();
-		},
 		created(){
 			//获取顶部数据
 			this.getIndexTop();
@@ -123,51 +112,11 @@
 			//获取顶部数据
 			getIndexTop(){
 				resource.getIndexTop().then(res => {
-					this.topInfo = res.data;
-				})
-			},
-			//折线图
-			getAxis(){
-				// 基于准备好的dom，初始化echarts实例
-				var axisChart = echarts.init(document.getElementById('axis_box'));
-				// 绘制图表
-				axisChart.setOption({
-					title: {
-						text: '注册、活跃和发布数量'
-					},
-					tooltip: {
-						trigger: 'axis'
-					},
-					legend: {
-						data: ['活跃', '发布']
-					},
-					grid: {
-						left: '3%',
-						right: '4%',
-						bottom: '3%',
-						containLabel: true
-					},
-					xAxis: {
-						type: 'category',
-						boundaryGap: false,
-						data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-					},
-					yAxis: {
-						type: 'value'
-					},
-					series: [
-					{
-						name: '活跃',
-						type: 'line',
-						stack: '总量',
-						data: [120, 132, 101, 134, 90, 230, 210]
-					},
-					{
-						name: '发布',
-						type: 'line',
-						stack: '总量',
-						data: [220, 182, 191, 234, 290, 330, 310]
-					}]
+					if(res.data.code == 1){
+						this.topInfo = res.data.data;
+					}else{
+						this.$message.warning(res.data.msg);
+					}
 				})
 			}
 		}

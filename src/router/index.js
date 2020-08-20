@@ -4,7 +4,7 @@ import Router from 'vue-router'
 const login = resolve=>require(['@/pages/Login/login'],resolve)
 const home = resolve=>require(['@/pages/Home/home'],resolve)
 const index = resolve=>require(['@/pages/Index/index'],resolve)
-const banner = resolve=>require(['@/pages/Banner/banner'],resolve)
+const template = resolve=>require(['@/pages/Template/template'],resolve)
 const category = resolve=>require(['@/pages/Category/category'],resolve)
 const category_02 = resolve=>require(['@/pages/Category/category_02'],resolve)
 const message = resolve=>require(['@/pages/Message/message'],resolve)
@@ -23,7 +23,7 @@ const router = new Router({
     component: home,
     children:[
     { path: '/index',name:"首页列表", component: index},
-    { path: '/banner',name:"banner管理", component: banner},
+    { path: '/template',name:"模版管理", component: template},
     { path: '/category',name:"分类管理", component: category},
     { path: '/category_02',name:"二级分类", component: category_02},
     { path: '/message',name:"信息管理", component: message},

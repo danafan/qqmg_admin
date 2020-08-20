@@ -2,15 +2,6 @@
 	<div>
 		<el-card>
 			<el-form :inline="true" size="small" class="demo-form-inline">
-				<el-form-item label="手机号：">
-					<el-input v-model="req.phone" type="number" placeholder="请输入手机号"></el-input>
-				</el-form-item>
-				<el-form-item label="用户状态：">
-					<el-select v-model="req.status">
-						<el-option v-for="item in user_status_list" :key="item.id" :label="item.name" :value="item.id">
-						</el-option>
-					</el-select>
-				</el-form-item>
 				<el-form-item label="注册时间：">
 					<el-date-picker
 					v-model="date"
@@ -22,6 +13,18 @@
 					:default-time="['00:00:00', '23:59:59']">
 				</el-date-picker>
 			</el-form-item>
+			<el-form-item label="用户编号：">
+				<el-input v-model="req.phone" type="number" placeholder="请输入手机号"></el-input>
+			</el-form-item>
+			<el-form-item label="手机号：">
+				<el-input v-model="req.phone" type="number" placeholder="请输入手机号"></el-input>
+			</el-form-item>
+			<el-form-item label="用户状态：">
+				<el-select v-model="req.status">
+					<el-option v-for="item in user_status_list" :key="item.id" :label="item.name" :value="item.id">
+					</el-option>
+				</el-select>
+			</el-form-item>
 			<el-button type="primary" size="small" @click="search">搜索</el-button>
 		</el-form>
 		<el-table :data="dataObj.data" border style="width: 100%" :header-cell-style="{'background':'#f4f4f4'}">
@@ -32,15 +35,19 @@
 			</el-table-column>
 			<el-table-column prop="create_address" label="注册地址" align="center">
 			</el-table-column>
+			<el-table-column prop="phone" label="用户编号" align="center">
+			</el-table-column>
 			<el-table-column prop="phone" label="手机号" align="center">
+			</el-table-column>
+			<el-table-column prop="active_day" label="活跃天数" align="center">
+			</el-table-column>
+			<el-table-column prop="active_day" label="发布数量" align="center">
 			</el-table-column>
 			<el-table-column prop="shop_num" label="状态" align="center">
 				<template slot-scope="scope">
 					<span v-if="scope.row.status == 1">正常</span>
 					<span v-if="scope.row.status == 2">已停用</span>
 				</template>
-			</el-table-column>
-			<el-table-column prop="active_day" label="活跃天数" align="center">
 			</el-table-column>
 			<el-table-column label="操作" align="center">
 				<template slot-scope="scope">
