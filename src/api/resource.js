@@ -1,5 +1,7 @@
 import http from './request.js'
 let path = {	
+	login:'admin/login',					//登录
+	quit:'admin/quit',						//退出
 	getIndexTop: "index/index",				//首页顶部信息
 	getCategoryList:'category/list',		//分类列表
 	addCategory:'category/add',				//添加分类
@@ -11,6 +13,8 @@ let path = {
 	getTemplateDetail:'template/getdetail',	//模版详情
 	editTemplate:'template/edit',			//修改模版
 	infoList:'info/list',					//信息列表
+	userList:'user/list',					//用户列表
+	setStatus:'user/setstatus',				//禁用用户
 
 	// state: "state",							//判断用户状态
 	// login: "login",							//用户登录
@@ -32,6 +36,14 @@ let path = {
 
 }
 export default{
+	//登录
+	login(params){
+		return http.post(path.login, params)
+	},
+	//退出
+	quit(params){
+		return http.get(path.quit, params)
+	},
 	//首页顶部信息
 	getIndexTop(params){
 		return http.get(path.getIndexTop, params)
@@ -76,7 +88,14 @@ export default{
 	infoList(params){
 		return http.get(path.infoList, params)
 	},
-
+	//用户列表
+	userList(params){
+		return http.get(path.userList, params)
+	},
+	//禁用用户
+	setStatus(params){
+		return http.post(path.setStatus, params)
+	},
 	//判断用户状态
 	// state(params){
 	// 	return http.get(path.state, params)

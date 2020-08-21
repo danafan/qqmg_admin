@@ -3,11 +3,15 @@
 		<div class="loginBack">
 			<div class="item">
 				<img class="icon" src="../../assets/username.png">
-				<input type="text" placeholder="请输入用户名" v-model="username" @keyup.enter="login">
+				<input type="text" placeholder="请输入用户名" v-model="req.admin_name" @keyup.enter="login">
 			</div>
 			<div class="item">
 				<img class="icon" src="../../assets/password.png">
-				<input type="password" placeholder="请输入密码" v-model="password" @keyup.enter="login">
+				<input type="password" placeholder="请输入密码" v-model="req.admin_pwd" @keyup.enter="login">
+			</div>
+			<div class="item">
+				<input class="captcha" v-model="req.captcha" placeholder="请输入验证码" @keyup.enter="login"></input>
+				<img class="code_img" :src="codeUrl" @click="getCode">
 			</div>
 		</div>
 		<div class="login" @click="login">登录</div>
@@ -43,8 +47,8 @@
 			align-items: center;
 			.icon{
 				margin-right: 10px;
-				width: 30px;
-				height: 32px;
+				width: 24px;
+				height: 26px;
 			}
 			input{
 				background: transparent;
@@ -67,6 +71,11 @@
 			:-ms-input-placeholder { 
 				color: #ffffff; 
 			} 
+			.code_img{
+				margin-left: 16px;
+				width:158px;
+				height:48px;
+			}
 		}
 	}
 	.login{
@@ -90,27 +99,37 @@
 	export default{
 		data(){
 			return{
-				username:"",			//用户名
-				password: "",			//密码
+				req:{
+					admin_name:"",			//用户名
+					admin_pwd: "",			//密码
+					captcha:"",				//验证码
+				},
+				codeUrl:"",
+				i:0
 			}
 		},
+		created(){
+			this.codeUrl = this.captcha;
+		},
 		methods:{
+			getCode(){
+				this.i += 1;
+				this.codeUrl = this.codeUrl + `?i=${this.i}`;	
+			},
 			login(){
-				if(this.username == ""){
+				if(this.req.admin_name == ""){
 					this.$message.warning("请输入用户名");
-				}else if(this.password == ""){
+				}else if(this.req.admin_pwd == ""){
 					this.$message.warning("请输入密码");
+				}else if(this.req.captcha == ""){
+					this.$message.warning("请输入验证码");
 				}else{
-					let userObj = {
-						username: this.username,
-						password: this.password
-					}
-					resource.login(userObj).then(res => {
-						if(res.data.code == "0"){
+					resource.login(this.req).then(res => {
+						if(res.data.code == 1){
 							this.$message.success("登录成功");
 							//获取返回的用户信息传递到主页
-							let userObj = res.data.data[0];
-							sessionStorage.setItem("username",userObj.username);
+							// let userObj = res.data.data[0];
+							// sessionStorage.setItem("username",userObj.username);
 							this.$router.push('/index');
 						}else{
 							this.$message.error(res.data.msg);

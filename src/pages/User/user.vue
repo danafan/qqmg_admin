@@ -14,13 +14,13 @@
 				</el-date-picker>
 			</el-form-item>
 			<el-form-item label="用户编号：">
-				<el-input v-model="req.phone" type="number" placeholder="请输入手机号"></el-input>
+				<el-input v-model="req.user_id" type="number" placeholder="请输入手机号"></el-input>
 			</el-form-item>
 			<el-form-item label="手机号：">
 				<el-input v-model="req.phone" type="number" placeholder="请输入手机号"></el-input>
 			</el-form-item>
 			<el-form-item label="用户状态：">
-				<el-select v-model="req.status">
+				<el-select v-model="req.user_status">
 					<el-option v-for="item in user_status_list" :key="item.id" :label="item.name" :value="item.id">
 					</el-option>
 				</el-select>
@@ -81,10 +81,12 @@
 				req:{
 					page:1,
 					pagesize:10,
+					user_status:"1",
+					create_time_start:"",
+					create_time_end:"",
+					user_id:"",
 					phone:"",
-					status:"1",
-					start_time:"",
-					end_time:""
+
 				},
 				user_status_list:[
 				{
@@ -92,7 +94,7 @@
 					name:"正常"
 				},
 				{
-					id:"2",
+					id:"0",
 					name:"禁用"
 				}
 				],
@@ -103,8 +105,8 @@
 		watch:{
 			//注册时间
 			date:function(n){
-				this.req.start_time = n?n[0]:"";
-				this.req.end_time = n?n[1]:"";
+				this.req.create_time_start = n && n.length > 0?n[0]:"";
+				this.req.create_time_end = n && n.length > 0?n[1]:"";
 			}
 		},
 		created(){
@@ -114,8 +116,12 @@
 		methods:{
 			//获取列表
 			getList(){
-				resource.getUserList(this.req).then(res => {
-					this.dataObj = res.data;
+				resource.userList(this.req).then(res => {
+					if(res.data.code == 1){
+
+					}else{
+						this.$message.warning(res.data.msg);
+					}
 				})
 			},
 			//设置
@@ -129,7 +135,7 @@
 						user_id:user_id,
 						status:status
 					}
-					resource.updateUserInfo(req).then(res => {
+					resource.setStatus(req).then(res => {
 						//获取列表
 						this.getList();
 					})

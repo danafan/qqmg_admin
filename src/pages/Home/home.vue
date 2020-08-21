@@ -160,8 +160,8 @@
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					resource.exit().then(res => {
-						if(res.data.code == 0){
+					resource.quit().then(res => {
+						if(res.data.code == 1){
 							sessionStorage.clear();
 							this.$message.success(res.data.msg);
 							this.$router.push('/login');
