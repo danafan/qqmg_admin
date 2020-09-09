@@ -20,19 +20,19 @@
 				<el-input v-model="req.user_id" placeholder="发布人昵称"></el-input>
 			</el-form-item>
 			<el-form-item label="一级分类：">
-				<el-select v-model="req.cate1" clearable>
+				<el-select v-model="req.cate1" @change="getCategoryList2">
 					<el-option v-for="item in categoryList1" :key="item.cate_id" :label="item.cate_name" :value="item.cate_id">
 					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="二级分类：">
-				<el-select v-model="req.cate2" clearable>
+				<el-select v-model="req.cate2">
 					<el-option v-for="item in categoryList2" :key="item.cate_id" :label="item.cate_name" :value="item.cate_id">
 					</el-option>
 				</el-select>
 			</el-form-item>
 			<el-form-item label="状态：">
-				<el-select v-model="req.status" clearable>
+				<el-select v-model="req.status">
 					<el-option v-for="item in status_list" :key="item.id" :label="item.name" :value="item.id">
 					</el-option>
 				</el-select>
@@ -40,38 +40,36 @@
 			<el-button type="primary" size="small" @click="search">搜索</el-button>
 		</el-form>
 		<el-table :data="dataObj.data" border style="width: 100%" :header-cell-style="{'background':'#f4f4f4'}">
-			<el-table-column width="180" label="发布时间" align="center">
+			<el-table-column width="180" prop="create_time" label="发布时间" align="center">
+			</el-table-column>
+			<el-table-column width="180" prop="nickname" label="发布人昵称" align="center">
+			</el-table-column>
+			<el-table-column width="180" prop="user_id" label="用户编号" align="center">
+			</el-table-column>
+			<el-table-column show-overflow-tooltip width="180" prop="address" label="发布地址" align="center">
+			</el-table-column>
+			<el-table-column width="180" prop="cate_name" label="所属分类" align="center">
+			</el-table-column>
+			<el-table-column show-overflow-tooltip width="200" prop="desc" label="描述" align="center">
+			</el-table-column>
+			<el-table-column width="200" prop="temp_content" label="模版信息" align="center">
+			</el-table-column>
+			<el-table-column width="120" label="文件" align="center">
 				<template slot-scope="scope">
-					<span>{{scope.row.create_time|formateDate}}</span>
+					<span class="null" v-if="scope.row.view_file.length == 0">暂无</span>
+					<span class="look" v-else @click="look(scope.row.view_file,scope.row.view_type,scope.row.host)">查看</span>
 				</template>
 			</el-table-column>
-			<el-table-column width="180" prop="create_user_nickname" label="发布人" align="center">
+			<el-table-column width="150" prop="linkman" label="联系人" align="center">
 			</el-table-column>
-			<el-table-column width="180" prop="create_user_nickname" label="用户编号" align="center">
+			<el-table-column width="150" prop="link_phone" label="联系电话" align="center">
 			</el-table-column>
-			<el-table-column show-overflow-tooltip width="180" prop="create_user_nickname" label="发布地址" align="center">
-			</el-table-column>
-			<el-table-column width="180" prop="category_name" label="所属分类" align="center">
-			</el-table-column>
-			<el-table-column show-overflow-tooltip width="200" prop="info_desc" label="描述" align="center">
-			</el-table-column>
-			<el-table-column width="200" prop="info_desc" label="模版信息" align="center">
-			</el-table-column>
-			<el-table-column width="120" prop="shop_num" label="文件" align="center">
-				<template slot-scope="scope">
-					<span class="null" v-if="!scope.row.file_list">暂无</span>
-					<span class="look" v-else @click="look(scope.row.file_list)">查看</span>
-				</template>
-			</el-table-column>
-			<el-table-column width="150" prop="contact" label="联系人" align="center">
-			</el-table-column>
-			<el-table-column width="150" prop="contact_phone" label="联系电话" align="center">
-			</el-table-column>
-			<el-table-column width="150" prop="browse_num" label="浏览量" align="center">
+			<el-table-column width="150" prop="view_count" label="浏览量" align="center">
 			</el-table-column>
 			<el-table-column label="操作" align="center" fixed="right">
 				<template slot-scope="scope">
-					<el-button type="text" size="small" @click="deleteInfo(scope.row.info_id,scope.row.file_list)">下架</el-button>
+					<el-button type="text" size="small" v-if="scope.row.status == 1" @click="deleteInfo(scope.row.info_id)">下架</el-button>
+					<span class="null" v-if="scope.row.status == 0">已下架</span>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -91,7 +89,7 @@
 <!-- 查看文件弹框 -->
 <div class="file_box" v-if="showBox" @click.stop="showBox = false">
 	<div class="fileCon">
-		<el-carousel class="fileCon" :loop="false" v-if="file_type == 'image'">
+		<el-carousel class="fileCon" :loop="false" v-if="file_type == 1">
 			<el-carousel-item class="fileCon" v-for="item in imgs" :key="item">
 				<img class="fileCon" :src="item">
 			</el-carousel-item>
@@ -165,7 +163,7 @@
 			//获取列表
 			this.getList(this.req);
 			//获取一级分类
-			// this.getCategoryList();
+			this.getCategoryList();
 		},
 		watch:{
 			//发布时间
@@ -179,9 +177,7 @@
 			getList(req){
 				resource.infoList(req).then(res => {
 					if(res.data.code == 1){
-						this.$message.success(res.data.msg);
-						//获取列表
-						this.getCategoryList();
+						this.dataObj = res.data.data;
 					}else{
 						this.$message.warning(res.data.msg);
 					}
@@ -189,10 +185,33 @@
 			},
 			//获取一级分类
 			getCategoryList(){
-				resource.getCategoryList({p_id:0}).then(res => {
-					this.categoryList = res.data.data;
-					this.categoryList.unshift({category_id:"",category_name:"全部"})
+				resource.getCategoryList().then(res => {
+					if(res.data.code == 1){
+						this.categoryList1 = res.data.data;
+						this.categoryList1.unshift({cate_id:"",cate_name:"全部"})
+					}else{
+						this.$message.warning(res.data.msg);
+					}
 				})
+			},
+			//获取二级分类
+			getCategoryList2(cate_id){
+				if(cate_id == ''){
+					this.categoryList2 = [];
+					this.req.cate2 = '';
+				}else{
+					resource.getCategoryList({cate_id:cate_id}).then(res => {
+						if(res.data.code == 1){
+							this.categoryList2 = res.data.data;
+							if(this.categoryList2.length == 0){
+								this.req.cate2 = '';
+							}
+							this.categoryList2.unshift({cate_id:"",cate_name:"全部"})
+						}else{
+							this.$message.warning(res.data.msg);
+						}
+					})
+				}
 			},
 			//搜索
 			search(){
@@ -213,14 +232,14 @@
 				this.getList(this.req);
 			},
 			//下架
-			deleteInfo(id,file_list){
+			deleteInfo(id){
 				this.$confirm('确认下架?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					resource.deleteInfo({info_id:id,filelist:file_list}).then(res => {
-						if(res.data.code == 0){
+					resource.shelvesInfo({info_id:id}).then(res => {
+						if(res.data.code == 1){
 							this.$message.success(res.data.msg);
 							//获取列表
 							this.getList(this.req);
@@ -236,30 +255,19 @@
 				});
 			},
 			//查看文件
-			look(file_list){
-				if (file_list && file_list.indexOf('mp4') > -1){
-					this.showBox = true;
-					this.file_type = 'video';
-					this.video = this.baseUrl + file_list;
-				}else{
-					this.file_type = 'image';
-					this.showBox = true;
+			look(file_list,type,host){
+				this.showBox = true;
+				this.file_type = type;	//1:图片，2:视频
+				if (this.file_type == 1){
 					this.imgs = [];
-					file_list.split("_").map(item => {
-						this.imgs.push(this.baseUrl + item);
+					file_list.map(item => {
+						let file_str = host + item;
+						this.imgs.push(file_str);
 					})
+				}else{
+					this.video = host + file_list[0];
 				}
 				
-			}
-		},
-		filters:{
-			formateDate:function(datetime) {
-				function addDateZero(num) {
-					return (num < 10 ? "0" + num : num);
-				}
-				let d = new Date(datetime);
-				let formatdatetime = d.getFullYear() + '-' + addDateZero(d.getMonth() + 1) + '-' + addDateZero(d.getDate()) + ' ' + addDateZero(d.getHours()) + ':' + addDateZero(d.getMinutes()) + ':' + addDateZero(d.getSeconds());
-				return formatdatetime;
 			}
 		}
 	}

@@ -34,20 +34,22 @@ const router = new Router({
 })
 // 路由跳转前的钩子
 router.beforeEach(function (to, from, next) {
-  let username = sessionStorage.getItem("username");
-  let path = to.path;
-  if(path != "/login"){
-    if(!username){
-      router.push('/login');
-    }else{
       let path = to.fullPath;
       sessionStorage.setItem("tab",path);
-    }
-  }else{
-    if(!!username){
-      router.go(-1);
-    }
-  }
+  // let username = sessionStorage.getItem("username");
+  // let path = to.path;
+  // if(path != "/login"){
+  //   if(!username){
+  //     router.push('/login');
+  //   }else{
+  //     let path = to.fullPath;
+  //     sessionStorage.setItem("tab",path);
+  //   }
+  // }else{
+  //   if(!!username){
+  //     router.go(-1);
+  //   }
+  // }
   next()
 })
 export default router;

@@ -10,4 +10,4 @@ module.exports = {
 		}
 	},
 	assetsDir: "admin"
-}
+} 

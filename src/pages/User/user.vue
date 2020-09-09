@@ -28,30 +28,27 @@
 			<el-button type="primary" size="small" @click="search">搜索</el-button>
 		</el-form>
 		<el-table :data="dataObj.data" border style="width: 100%" :header-cell-style="{'background':'#f4f4f4'}">
-			<el-table-column label="注册时间" align="center">
-				<template slot-scope="scope">
-					<span>{{scope.row.create_time|formateDate}}</span>
-				</template>
+			<el-table-column prop="create_time" label="注册时间" align="center">
 			</el-table-column>
-			<el-table-column prop="create_address" label="注册地址" align="center">
+			<el-table-column prop="create_addr" label="注册地址" align="center">
 			</el-table-column>
-			<el-table-column prop="phone" label="用户编号" align="center">
+			<el-table-column prop="user_id" label="用户编号" align="center">
 			</el-table-column>
 			<el-table-column prop="phone" label="手机号" align="center">
 			</el-table-column>
-			<el-table-column prop="active_day" label="活跃天数" align="center">
+			<el-table-column prop="active_days" label="活跃天数" align="center">
 			</el-table-column>
-			<el-table-column prop="active_day" label="发布数量" align="center">
+			<el-table-column prop="publish_num" label="发布数量" align="center">
 			</el-table-column>
-			<el-table-column prop="shop_num" label="状态" align="center">
+			<el-table-column label="状态" align="center">
 				<template slot-scope="scope">
 					<span v-if="scope.row.status == 1">正常</span>
-					<span v-if="scope.row.status == 2">已停用</span>
+					<span v-if="scope.row.status == 0">已禁用</span>
 				</template>
 			</el-table-column>
 			<el-table-column label="操作" align="center">
 				<template slot-scope="scope">
-					<el-button type="text" size="small" @click="setting(scope.row.status,scope.row.user_id)">{{scope.row.status == 1?'禁用':'启用'}}</el-button>
+					<el-button type="text" size="small" @click="setting(scope.row.user_id)">{{scope.row.status == 1?'禁用':'启用'}}</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -95,7 +92,7 @@
 				},
 				{
 					id:"0",
-					name:"禁用"
+					name:"已禁用"
 				}
 				],
 				date:[],		//注册时间
@@ -118,26 +115,27 @@
 			getList(){
 				resource.userList(this.req).then(res => {
 					if(res.data.code == 1){
-
+						this.dataObj = res.data.data;
 					}else{
 						this.$message.warning(res.data.msg);
 					}
 				})
 			},
 			//设置
-			setting(status,user_id){
+			setting(user_id){
 				this.$confirm('确认修改?', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 					type: 'warning'
 				}).then(() => {
-					let req = {
-						user_id:user_id,
-						status:status
-					}
-					resource.setStatus(req).then(res => {
-						//获取列表
-						this.getList();
+					resource.setStatus({user_id:user_id}).then(res => {
+						if(res.data.code == 1){
+							this.$message.success(res.data.msg);
+							//获取列表
+							this.getList();
+						}else{
+							this.$message.warning(res.data.msg);
+						}
 					})
 				}).catch(() => {
 					this.$message({

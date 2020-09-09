@@ -47,8 +47,8 @@
 			align-items: center;
 			.icon{
 				margin-right: 10px;
-				width: 24px;
-				height: 26px;
+				width: 20px;
+				height: 22px;
 			}
 			input{
 				background: transparent;
@@ -128,8 +128,7 @@
 						if(res.data.code == 1){
 							this.$message.success("登录成功");
 							//获取返回的用户信息传递到主页
-							// let userObj = res.data.data[0];
-							// sessionStorage.setItem("username",userObj.username);
+							sessionStorage.setItem("username",res.data.data);
 							this.$router.push('/index');
 						}else{
 							this.$message.error(res.data.msg);

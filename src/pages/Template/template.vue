@@ -7,12 +7,11 @@
 			<el-table :data="temp_list" border style="width: 100%" :header-cell-style="{'background':'#f4f4f4'}">
 				<el-table-column prop="temp_name" label="模版名称" align="center">
 				</el-table-column>
-				<el-table-column prop="temp_items" label="模版选项" align="center">
+				<el-table-column prop="temp_items" label="模版选项">
 					<template slot-scope="scope">
-						<div v-for="item in JSON.parse(scope.row.temp_items)">
-							选项名称：{{item.item_name}}
-							标签类型:{{item.label_type}}
-							标签内容:{{JSON.stringify(item.item_value)}}
+						<div style="margin-bottom: 10px" v-for="item in JSON.parse(scope.row.temp_items)">
+							<span style="color: red">{{item.item_name}}</span>
+							 - {{item.label_type | tagType(temp_dom_list)}} - {{JSON.stringify(item.item_value)}}
 						</div>
 					</template>
 				</el-table-column>
@@ -29,25 +28,26 @@
 					<el-input v-model="req.temp_name" placeholder="请输入模版名称"></el-input>
 				</el-form-item>
 				<el-form-item label="模版选项">
-					<div style="display: flex;align-items: center;margin-bottom: 20px" v-for="(item,index) in temp_content">
-						<el-input v-model="item.item_name" placeholder="选项名称" style="width: 150px"></el-input>
-						<el-select v-model="item.label_type" placeholder="标签类型" @change="changeType($event,index)">
+					<div style="margin-right: 20px;margin-bottom: 10px" v-for="(item,index) in temp_content">
+						<el-tag closable type="success" effect="dark" @close="deleteTempItem(index)">{{item.item_name}} - {{item.label_type | tagType(temp_dom_list)}} - {{item.item_value}}</el-tag>
+					</div>
+					<div style="display: flex;align-items: center;margin-bottom: 20px">
+						<el-input v-model="temp_content_item.item_name" placeholder="选项名称" style="width: 150px"></el-input>
+						<el-select v-model="temp_content_item.label_type" placeholder="标签类型">
 							<el-option v-for="item in temp_dom_list" :key="item.label_type" :label="item.label_text" :value="item.label_type">
 							</el-option>
 						</el-select>
 						<el-select
-						v-if="item.label_type == 2 || item.label_type == 3"
-						v-model="item.item_value"
+						v-if="temp_content_item.label_type == 2 || temp_content_item.label_type == 3"
+						v-model="temp_content_item.item_value"
 						multiple
 						filterable
 						allow-create
 						default-first-option
 						placeholder="标签内容">
 					</el-select>
-					<el-button style="margin-left: 20px" type="danger" icon="el-icon-delete" circle @click="deleteTempItem(index)" v-if="temp_content.length > 1 && index != temp_content.length - 1"></el-button>
-					<el-button style="margin-left: 20px" type="success" icon="el-icon-plus" circle @click="addOptions(item)" v-if="index == temp_content.length - 1"></el-button>
+					<el-button style="margin-left: 20px" type="success" icon="el-icon-plus" circle @click="addOptions"></el-button>
 				</div>
-				
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
@@ -75,11 +75,12 @@
 					temp_name:"",
 					temp_items:""
 				},
-				temp_content:[{
+				temp_content:[],	//模版内容数组
+				temp_content_item:{
 					item_name:"",
 					label_type:"",
 					item_value:[]
-				}],	//模版内容数组
+				},
 				temp_dom_list:[{
 					label_text:'输入框',
 					label_type:1
@@ -117,11 +118,7 @@
 					temp_name:"",
 					temp_items:""
 				}
-				this.temp_content = [{
-					item_name:"",
-					label_type:"",
-					item_value:[]
-				}],
+				this.temp_content = [],
 				this.showType = 1;
 				this.showDialog = true;
 			},
@@ -139,81 +136,67 @@
 				})
 			},
 			//添加选项
-			addOptions(item){
-				if(item.item_name == ''){
+			addOptions(){
+				if(this.temp_content_item.item_name == ''){
 					this.$message.warning('请输入选项名称！')
-				}else if(item.label_type == ''){
+				}else if(this.temp_content_item.label_type == ''){
 					this.$message.warning('请选择标签类型！')
-				}else if((item.label_type == 2 || item.label_type == 3) && item.item_value.length == 0){
+				}else if((this.temp_content_item.label_type == 2 || this.temp_content_item.label_type == 3) && this.temp_content_item.item_value.length == 0){
 					this.$message.warning('请添加标签内容！')
 				}else{
-					let obj = {
+					this.temp_content.push(this.temp_content_item)//模版内容数组
+					this.temp_content_item = {
 						item_name:"",
 						label_type:"",
 						item_value:[]
 					}
-					this.temp_content.push(obj)//模版内容数组
 				}
 			},
 			//删除选项
 			deleteTempItem(index){
 				this.temp_content.splice(index,1);
 			},
-			changeType(v,index){
-				if(v == 1 || v == 4){
-					this.temp_content[index].item_value = [];
-				}
-			},
 			//确认提交	
 			submit(){
 				if(this.req.temp_name == ''){
 					this.$message.warning("请输入模版名称");
 				}else{
-					var arrReq = [];
-					var isReq = true;
-					this.temp_content.map((item,index) => {
-						if(item.item_name != '' && item.label_type != ''){
-							if((item.label_type == 2 || item.label_type == 3) && item.item_value.length == 0){
-								this.$message.warning('请输入标签内容！')
-								isReq = false;
+					this.req.temp_items = JSON.stringify(this.temp_content);
+					if(this.showType == 1){	
+						resource.addTemplate(this.req).then(res => {
+							if(res.data.code == 1){
+								this.$message.success(res.data.msg);
+								this.showDialog = false;
+								//模版列表
+								this.templateList();
 							}else{
-								arrReq.push(item);
+								this.$message.warning(res.data.msg);
 							}
-						}else{
-							this.$message.warning('请完善标签选项！')
-							isReq = false;
-						}
-					});
-					if(isReq){
-						this.req.temp_items = JSON.stringify(arrReq);
-						if(this.showType == 1){	//添加
-							resource.addTemplate(this.req).then(res => {
-								if(res.data.code == 1){
-									this.$message.success(res.data.msg);
-									this.showDialog = false;
-									//模版列表
-									this.templateList();
-								}else{
-									this.$message.warning(res.data.msg);
-								}
-							})
-						}else{					//修改
-							resource.editTemplate(this.req).then(res => {
-								if(res.data.code == 1){
-									this.$message.success(res.data.msg);
-									this.showDialog = false;
-									//模版列表
-									this.templateList();
-								}else{
-									this.$message.warning(res.data.msg);
-								}
-							})
-						}
-						
+						})
+					}else{				
+						resource.editTemplate(this.req).then(res => {
+							if(res.data.code == 1){
+								this.$message.success(res.data.msg);
+								this.showDialog = false;
+								//模版列表
+								this.templateList();
+							}else{
+								this.$message.warning(res.data.msg);
+							}
+						})
 					}
-					
 				}
-				
+			}
+		},
+		filters:{
+			tagType:function(v,temp_dom_list){
+				var str = "";
+				temp_dom_list.map(item => {
+					if(item.label_type == v){
+						str = item.label_text;
+					}
+				})
+				return str;
 			}
 		}
 	}

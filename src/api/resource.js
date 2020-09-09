@@ -13,6 +13,7 @@ let path = {
 	getTemplateDetail:'template/getdetail',	//模版详情
 	editTemplate:'template/edit',			//修改模版
 	infoList:'info/list',					//信息列表
+	shelvesInfo:'info/setstatus',			//下架信息
 	userList:'user/list',					//用户列表
 	setStatus:'user/setstatus',				//禁用用户
 
@@ -87,6 +88,10 @@ export default{
 	//信息列表
 	infoList(params){
 		return http.get(path.infoList, params)
+	},
+	//下架信息
+	shelvesInfo(params){
+		return http.post(path.shelvesInfo, params)
 	},
 	//用户列表
 	userList(params){

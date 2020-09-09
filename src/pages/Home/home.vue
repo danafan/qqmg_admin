@@ -128,7 +128,7 @@
 		},
 		created(){
 			this.admin_name = sessionStorage.getItem("username");
-			let tab = sessionStorage.getItem("tab").indexOf('?') > -1 ? sessionStorage.getItem("tab").split("?")[0] : sessionStorage.getItem("tab");
+			let tab = sessionStorage.getItem("tab");
 			if(!tab){
 				this.activeIndex = '/index';
 			}else{

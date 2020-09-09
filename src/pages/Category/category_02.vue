@@ -9,14 +9,11 @@
 				</el-table-column>
 				<el-table-column width="150" prop="cate_name" label="分类名称" align="center">
 				</el-table-column>
-				<el-table-column width="200" prop="temp_desc" label="所属模版" align="center">
+				<el-table-column width="200" prop="temp_name" label="所属模版" align="center">
 				</el-table-column>
-				<el-table-column prop="category_name" label="标签" align="center">
-					<template slot-scope="scope">
-						<div></div>
-					</template>
+				<el-table-column prop="tags" label="标签" align="center">
 				</el-table-column>
-				<el-table-column show-overflow-tooltip prop="category_desc" label="描述" align="center">
+				<el-table-column show-overflow-tooltip prop="default_desc" label="描述" align="center">
 				</el-table-column>
 				<el-table-column width="150" label="操作" align="center">
 					<template slot-scope="scope">
@@ -100,7 +97,7 @@
 		methods:{
 			//获取分类列表
 			getCategoryList(){
-				resource.getCategoryList({cate_id:this.pcid}).then(res => {
+				resource.getCategoryList({cate_id:this.pcid,level:2}).then(res => {
 					if(res.data.code == 1){
 						this.category_list = res.data.data;
 					}else{
